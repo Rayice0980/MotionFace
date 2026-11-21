@@ -103,3 +103,52 @@ export function smoothValue(previous: number | null, current: number, alpha: num
   const amount = clamp(alpha, 0, 1);
   return previous + (current - previous) * amount;
 }
+
+function smoothLandmarks(previous: Landmark[] | null, current: Landmark[], alpha: number): Landmark[] {
+  return current.map((point, index) => {
+    const prior = previous?.[index];
+    return {
+      x: smoothValue(prior?.x ?? null, point.x, alpha),
+      y: smoothValue(prior?.y ?? null, point.y, alpha),
+      z: smoothValue(prior?.z ?? null, point.z, alpha),
+      ...(point.visibility === undefined
+        ? {}
+        : { visibility: smoothValue(prior?.visibility ?? null, point.visibility, alpha) }),
+    };
+  });
+}
+
+export function smoothTrackingFrame(
+  previous: TrackingFrame | null,
+  current: TrackingFrame,
+  alpha = 0.55,
+): TrackingFrame {
+  const previousFace = previous?.face;
+  const face = current.face
+    ? {
+        landmarks: smoothLandmarks(previousFace?.landmarks ?? null, current.face.landmarks, alpha),
+        blendshapes: Object.fromEntries(
+          Object.entries(current.face.blendshapes).map(([name, value]) => [
+            name,
+            smoothValue(previousFace?.blendshapes[name] ?? null, value, alpha),
+          ]),
+        ),
+      }
+    : null;
+
+  return {
+    timestamp: current.timestamp,
+    face,
+    pose: current.pose
+      ? smoothLandmarks(previous?.pose ?? null, current.pose, alpha)
+      : null,
+    hands: current.hands.map((hand, index) => {
+      const previousHand = previous?.hands[index];
+      const priorLandmarks = previousHand?.handedness === hand.handedness ? previousHand.landmarks : null;
+      return {
+        handedness: hand.handedness,
+        landmarks: smoothLandmarks(priorLandmarks, hand.landmarks, alpha),
+      };
+    }),
+  };
+}

@@ -11,6 +11,16 @@ describe("getCameraErrorMessage", () => {
     expect(getCameraErrorMessage(new DOMException("busy", "NotReadableError"))).toMatch(/in use/i);
   });
 
+  it("explains insecure contexts and unsupported camera APIs", () => {
+    expect(getCameraErrorMessage({ name: "SecurityError" })).toMatch(/https|localhost/i);
+    expect(getCameraErrorMessage({ name: "NotSupportedError" })).toMatch(/browser/i);
+  });
+
+  it("handles DOM exceptions from another realm by their error name", () => {
+    expect(getCameraErrorMessage({ name: "NotAllowedError" })).toMatch(/permission/i);
+    expect(getCameraErrorMessage({ name: "DeviceDisconnectedError" })).toMatch(/disconnected/i);
+  });
+
   it("provides a useful fallback for unknown failures", () => {
     expect(getCameraErrorMessage(new Error("unknown"))).toMatch(/camera/i);
   });

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { createImageObjectUrlManager } from "@/lib/image-object-url";
 import { readImageDimensions, validateImageFile } from "@/lib/image-validation";
 
 export type ImageMode = "portrait" | "full-body";
@@ -15,17 +16,13 @@ interface PreparedImage {
 
 export function ImageStudio() {
   const inputRef = useRef<HTMLInputElement>(null);
-  const objectUrlRef = useRef<string | null>(null);
+  const objectUrlManagerRef = useRef<ReturnType<typeof createImageObjectUrlManager> | null>(null);
   const [consented, setConsented] = useState(false);
   const [mode, setMode] = useState<ImageMode>("portrait");
   const [image, setImage] = useState<PreparedImage | null>(null);
   const [error, setError] = useState("");
 
-  useEffect(
-    () => () => {
-      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
-    },
-  );
+  useEffect(() => () => objectUrlManagerRef.current?.dispose(), []);
 
   async function chooseFile(file?: File) {
     if (!file) return;
@@ -46,9 +43,8 @@ export function ImageStudio() {
 
     try {
       const dimensions = await readImageDimensions(file);
-      const url = URL.createObjectURL(file);
-      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
-      objectUrlRef.current = url;
+      const objectUrlManager = objectUrlManagerRef.current ??= createImageObjectUrlManager(URL);
+      const url = objectUrlManager.create(file);
       setImage({ url, name: file.name, ...dimensions });
       setError("");
     } catch {
@@ -57,8 +53,7 @@ export function ImageStudio() {
   }
 
   function clearImage() {
-    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
-    objectUrlRef.current = null;
+    objectUrlManagerRef.current?.clear();
     setImage(null);
     setError("");
     if (inputRef.current) inputRef.current.value = "";

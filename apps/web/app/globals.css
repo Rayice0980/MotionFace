@@ -138,6 +138,11 @@ h1 { margin: 0; color: #edf3ff; font-size: clamp(24px, 2.3vw, 31px); line-height
 .signal-copy small { color: #718098; font-size: 8px; white-space: nowrap; }
 .signal-state { margin-left: auto; color: #66758d; font-size: 6.5px; font-weight: 730; letter-spacing: .45px; }
 .signal-state.detected { color: #7bd7b1; }
+.signal-state.state-searching { color: #91a7d0; }
+.signal-state.state-loading { color: #91b8ff; }
+.signal-state.state-error { color: #ff9d92; }
+.signal-state.state-unavailable { color: #d6a77a; }
+.signal-error .signal-icon, .signal-unavailable .signal-icon { border-color: rgba(255, 157, 146, .2); color: #f0a298; background: rgba(123, 49, 49, .12); }
 .panel-divider { height: 1px; margin: 13px 0 15px; background: var(--line); }
 .field-label { display: block; margin-bottom: 7px; color: #8290a6; font-size: 7px; font-weight: 720; letter-spacing: .75px; }
 .device-select { width: 100%; height: 34px; padding: 0 9px; border: 1px solid rgba(139, 161, 205, .14); border-radius: 6px; color: #bec9dc; background: rgba(7, 14, 25, .64); font-size: 9px; }
@@ -153,6 +158,7 @@ h1 { margin: 0; color: #edf3ff; font-size: clamp(24px, 2.3vw, 31px); line-height
 .stop-square { width: 8px; height: 8px; border-radius: 2px; background: #b5c5e2; }
 .camera-note { margin: 9px 0 0; color: #68768d; font-size: 7px; line-height: 1.55; }
 .inline-error { margin: 9px 0 0; color: #ffb2a6; font-size: 8px; line-height: 1.5; }
+.permission-help { margin: 7px 0 0; padding: 8px; border: 1px solid rgba(143, 170, 225, .15); border-radius: 6px; color: #a4b6d5; background: rgba(49, 69, 109, .13); font-size: 7.5px; line-height: 1.55; }
 .bottom-status { min-height: 45px; display: flex; align-items: center; gap: 11px; margin-top: 13px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; background: rgba(16, 25, 41, .68); }
 .status-group { display: inline-flex; align-items: center; gap: 6px; color: #8390a6; font-size: 8px; white-space: nowrap; }
 .status-group strong { color: #bac7d9; font-size: 8px; font-weight: 560; }
@@ -221,7 +227,7 @@ h1 { margin: 0; color: #edf3ff; font-size: clamp(24px, 2.3vw, 31px); line-height
 @media (max-width: 850px) {
   .sidebar { width: 64px; align-items: center; padding: 20px 8px 12px; }
   .brand-lockup { margin: 0 0 28px; }
-  .brand-type, .workspace-switcher, .nav-section-label, .nav-item:not(.nav-active), .nav-active:not(:hover) { }
+  .brand-type { display: none; }
   .workspace-switcher { width: 42px; min-height: 42px; justify-content: center; padding: 5px; }
   .workspace-copy, .workspace-chevron, .main-nav .nav-section-label, .main-nav .nav-item:not(.nav-active), .nav-active { font-size: 0; gap: 0; }
   .main-nav { width: 100%; align-items: center; margin-top: 23px; }

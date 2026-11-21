@@ -107,6 +107,20 @@ The browser output contract may expose a `MediaStream` for MotionFace-owned WebR
 6. **Virtual camera portability:** OS camera APIs, drivers, notarization and conferencing-app discovery differ. Keep adapters independent; verify one OS and app at a time; document unsupported combinations explicitly.
 7. **Biometric/privacy exposure:** photos, facial landmarks and generated likenesses are sensitive. Minimize collection, process locally first, require consent, keep storage private, enforce RLS, add deletion, and never use face/body signals for analytics.
 
+## Phase 2: camera and tracking validation
+
+The browser camera session now owns permission preflight, acquisition, switching, disconnect detection and teardown. The Permissions API is advisory and optional; `getUserMedia` remains the final source of truth. An in-flight request is invalidated when stopped or disposed, and any late-arriving stream has all tracks stopped. Track `ended` and device-list changes invalidate a disconnected active camera. Page hide and component unmount release active tracks.
+
+Tracking setup reports runtime, face, body and hand model loading failures separately and closes models already initialized before a later load failure. Detector close is idempotent and attempts every detector even if one close operation throws. Inference errors stop the frame loop and close the tracker while leaving the user an explicit camera stop/retry path.
+
+The inference loop follows video-frame callbacks when supported, falls back to animation frames, skips duplicate video frames, and caps model inference at 10 Hz. It publishes measured elapsed inference time and inference FPS only after a full one-second sample window. Landmark and blendshape values use exponential smoothing; face/body loss and missing hands clear immediately so prior landmarks are not presented as current tracking.
+
+### Phase 2 verification record
+
+- Camera lifecycle tests cover permission preflight and rejection, unsupported capture, missing video input, canceled acquisition, stop/unmount cleanup, device selection, track disconnection and device-list removal.
+- Tracking tests cover runtime/model initialization failures, partial-model cleanup, idempotent close, inference failure, inference loop cancellation/cadence/timing, and temporal smoothing without stale tracks.
+- The hardware-dependent browser permission, physical device switching/disconnection and sustained performance checks still require manual verification on a camera-enabled browser.
+
 ## Phase 1 implementation checklist
 
 - [x] Inspect local workspace and connected GitHub account; confirm no MotionFace repository.

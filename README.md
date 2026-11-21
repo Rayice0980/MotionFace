@@ -15,7 +15,9 @@ pnpm install
 pnpm dev
 ```
 
-Open the local URL printed by Next.js. In Animation Studio, choose **Start camera & tracking** and grant camera permission to run the on-device MediaPipe face, pose, and hand models. The first start downloads the pinned MediaPipe package's WASM runtime and public model files. Camera frames remain in the browser; this prototype has no account, upload API, backend, database, or cloud inference.
+Open the local URL printed by Next.js. In Animation Studio, choose **Start camera & tracking** and grant camera permission to run the on-device MediaPipe face, pose, and hand models. Camera capture requires a secure context (HTTPS or `localhost`). If access was denied, allow Camera in the browser's site settings and retry. When several cameras are available, choose one from **Camera device** while capture is active. Disconnecting the active device stops tracking and shows a recovery message.
+
+The first start downloads the pinned MediaPipe package's WASM runtime and public model files. Camera frames remain in the browser; this prototype has no account, upload API, backend, database, or cloud inference. Tracking is limited to a measured 10 inference updates per second; inference time and FPS remain blank until measured. Missing face, body, or hand landmarks are shown independently, and smoothing does not keep a missing track visible.
 
 Image Studio accepts PNG, JPEG, or WebP files up to 12 MiB after the user confirms they own the image or have permission to use the likeness. The image is decoded locally and held as a browser object URL. Deleting or unchecking consent removes it from the current session.
 
@@ -31,7 +33,7 @@ pnpm build
 ## Current scope and limits
 
 - Face blendshapes/head landmarks, pose landmarks, and up to two hands drive limited controls on a generic procedural Three.js rig.
-- Detection runs less frequently than rendering to preserve UI responsiveness; CPU-only inference may still be too slow on some devices.
+- Detection is scheduled from incoming video frames, capped at 10 updates per second, and smoothed; CPU-only inference may still be too slow on some devices.
 - A selected photo is only previewed; it does not become the avatar.
 - Virtual Camera controls are placeholders. A browser canvas stream is not an OS-wide virtual camera and cannot be selected in arbitrary desktop calling apps.
 - Native Windows/macOS camera drivers, mobile camera replacement, accounts, cloud storage, billing, and asynchronous photo reconstruction are not implemented.

@@ -1,0 +1,16 @@
+{
+  "name": "@motionface/avatar-three",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@motionface/motion-core": "workspace:*",
+    "three": "0.187.0"
+  },
+  "devDependencies": {
+    "@types/three": "0.187.0"
+  }
+}

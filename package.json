@@ -1,0 +1,19 @@
+{
+  "name": "motionface",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @motionface/web dev",
+    "build": "pnpm --filter @motionface/web build",
+    "typecheck": "pnpm --filter @motionface/web typecheck",
+    "lint": "pnpm --filter @motionface/web lint",
+    "test": "vitest run --pool=threads --maxWorkers=1"
+  },
+  "devDependencies": {
+    "vitest": "5.1.1"
+  }
+}
